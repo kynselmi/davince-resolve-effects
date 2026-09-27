@@ -1,0 +1,1786 @@
+FuRegisterClass("ProceduralLightning", CT_Tool, {
+
+    REGS_Name = "Procedural Lightning",
+
+    REGS_Category = "Fuses\\Custom",
+
+    REGS_OpIconString = "PL",
+
+    REGS_OpDescription =
+        "Procedural branching lightning generator",
+
+})
+
+
+--------------------------------------------------
+-- CREATE
+--------------------------------------------------
+
+--------------------------------------------------
+-- CREATE
+--------------------------------------------------
+
+function Create()
+
+    --------------------------------------------------
+    -- BACKGROUND
+    --------------------------------------------------
+
+    InImage = self:AddInput(
+        "Background",
+        "Background",
+        {
+            LINKID_DataType = "Image",
+            LINK_Main = 1,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- MAIN BOLT HEADER
+    --------------------------------------------------
+
+    InMainBoltHeader = self:AddInput(
+        "──────── MAIN BOLT ────────",
+        "MainBoltHeader",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "LabelControl",
+            INP_External = false,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- START
+    --------------------------------------------------
+
+    InStart = self:AddInput(
+        "Start",
+        "Start",
+        {
+            LINKID_DataType = "Point",
+
+            INPID_InputControl = "OffsetControl",
+            INPID_PreviewControl = "CrosshairControl",
+
+            INP_DefaultX = 0.5,
+            INP_DefaultY = 0.05,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- TARGET
+    --------------------------------------------------
+
+    InTarget = self:AddInput(
+        "Target",
+        "Target",
+        {
+            LINKID_DataType = "Point",
+
+            INPID_InputControl = "OffsetControl",
+            INPID_PreviewControl = "CrosshairControl",
+
+            INP_DefaultX = 0.5,
+            INP_DefaultY = 0.9,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- WIDTH
+    --------------------------------------------------
+
+    InWidth = self:AddInput(
+        "Width",
+        "Width",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 0.005,
+
+            INP_MinScale = 0.001,
+            INP_MaxScale = 0.05,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- MAIN SEGMENTS
+    --------------------------------------------------
+
+    InSegments = self:AddInput(
+        "Segments",
+        "Segments",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 40,
+            INP_Integer = true,
+
+            INP_MinScale = 2,
+            INP_MaxScale = 200,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- RANDOMNESS
+    --------------------------------------------------
+
+    InRandomness = self:AddInput(
+        "Randomness",
+        "Randomness",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 0.035,
+
+            INP_MinScale = 0.0,
+            INP_MaxScale = 0.15,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- BRANCHES HEADER
+    --------------------------------------------------
+
+    InBranchesHeader = self:AddInput(
+        "──────── BRANCHES ────────",
+        "BranchesHeader",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "LabelControl",
+            INP_External = false,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- BRANCH CHANCE
+    --------------------------------------------------
+
+    InBranchChance = self:AddInput(
+        "Branch Chance",
+        "BranchChance",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 0.12,
+
+            INP_MinScale = 0.0,
+            INP_MaxScale = 0.5,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- BRANCH LENGTH
+    --------------------------------------------------
+
+    InBranchLength = self:AddInput(
+        "Branch Length",
+        "BranchLength",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 0.18,
+
+            INP_MinScale = 0.02,
+            INP_MaxScale = 0.5,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- BRANCH ANGLE
+    --------------------------------------------------
+
+    InBranchAngle = self:AddInput(
+        "Branch Angle",
+        "BranchAngle",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 35.0,
+
+            INP_MinScale = 5.0,
+            INP_MaxScale = 80.0,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- BRANCH SEGMENTS
+    --------------------------------------------------
+
+    InBranchSegments = self:AddInput(
+        "Branch Segments",
+        "BranchSegments",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 12,
+            INP_Integer = true,
+
+            INP_MinScale = 2,
+            INP_MaxScale = 50,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- RECURSIVE BRANCHES HEADER
+    --------------------------------------------------
+
+    InRecursiveHeader = self:AddInput(
+        "──── RECURSIVE BRANCHES ────",
+        "RecursiveHeader",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "LabelControl",
+            INP_External = false,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- BRANCH DEPTH
+    --------------------------------------------------
+
+    InBranchDepth = self:AddInput(
+        "Branch Depth",
+        "BranchDepth",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 2,
+            INP_Integer = true,
+
+            INP_MinScale = 0,
+            INP_MaxScale = 5,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- CHILD BRANCH CHANCE
+    --------------------------------------------------
+
+    InChildBranchChance = self:AddInput(
+        "Child Branch Chance",
+        "ChildBranchChance",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 0.25,
+
+            INP_MinScale = 0.0,
+            INP_MaxScale = 1.0,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- BRANCH WIDTH FALLOFF
+    --------------------------------------------------
+
+    InBranchWidthFalloff = self:AddInput(
+        "Branch Width Falloff",
+        "BranchWidthFalloff",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 0.55,
+
+            INP_MinScale = 0.1,
+            INP_MaxScale = 1.0,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- MAX BRANCHES
+    --------------------------------------------------
+
+    InMaxBranches = self:AddInput(
+        "Max Branches",
+        "MaxBranches",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 150,
+            INP_Integer = true,
+
+            INP_MinScale = 10,
+            INP_MaxScale = 500,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- ANIMATION HEADER
+    --------------------------------------------------
+
+    InAnimationHeader = self:AddInput(
+        "──────── ANIMATION ────────",
+        "AnimationHeader",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "LabelControl",
+            INP_External = false,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- SEED
+    --------------------------------------------------
+
+    InSeed = self:AddInput(
+        "Seed",
+        "Seed",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 1,
+            INP_Integer = true,
+
+            INP_MinScale = 1,
+            INP_MaxScale = 1000,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- PROGRESS
+    --------------------------------------------------
+
+    InProgress = self:AddInput(
+        "Progress",
+        "Progress",
+        {
+            LINKID_DataType = "Number",
+            INPID_InputControl = "SliderControl",
+
+            INP_Default = 1.0,
+
+            INP_MinScale = 0.0,
+            INP_MaxScale = 1.0,
+        }
+    )
+
+
+    --------------------------------------------------
+    -- OUTPUT
+    --------------------------------------------------
+
+    OutImage = self:AddOutput(
+        "Output",
+        "Output",
+        {
+            LINKID_DataType = "Image",
+            LINK_Main = 1,
+        }
+    )
+
+end
+
+--------------------------------------------------
+-- VECTOR HELPERS
+--------------------------------------------------
+
+function VectorLength(x, y)
+
+    return math.sqrt(
+        x * x +
+        y * y
+    )
+
+end
+
+
+function NormalizeVector(x, y)
+
+    local length =
+        VectorLength(
+            x,
+            y
+        )
+
+
+    if length < 0.000001 then
+
+        return
+            0.0,
+            0.0,
+            false
+
+    end
+
+
+    return
+        x / length,
+        y / length,
+        true
+
+end
+
+
+function RotateVector(x, y, angle)
+
+    local cosA =
+        math.cos(angle)
+
+
+    local sinA =
+        math.sin(angle)
+
+
+    return
+        x * cosA - y * sinA,
+        x * sinA + y * cosA
+
+end
+
+
+--------------------------------------------------
+-- RANDOM HELPERS
+--------------------------------------------------
+
+function RandomSigned()
+
+    return
+        math.random() * 2.0 - 1.0
+
+end
+
+
+function RandomSide()
+
+    if math.random() < 0.5 then
+
+        return -1
+
+    end
+
+
+    return 1
+
+end
+
+
+--------------------------------------------------
+-- POLYLINE HELPERS
+--------------------------------------------------
+
+function NewPolyline(
+    x,
+    y,
+    depth,
+    startProgress,
+    endProgress
+)
+
+    return {
+
+        depth = depth,
+
+        startProgress =
+            startProgress,
+
+        endProgress =
+            endProgress,
+
+        points = {
+
+            {
+                x = x,
+                y = y
+            }
+
+        }
+
+    }
+
+end
+
+
+function AddPoint(
+    line,
+    x,
+    y
+)
+
+    table.insert(
+        line.points,
+        {
+            x = x,
+            y = y
+        }
+    )
+
+end
+
+
+--------------------------------------------------
+-- UPDATE BRANCH DIRECTION
+--------------------------------------------------
+
+function UpdateBranchDirection(
+    dirX,
+    dirY
+)
+
+    --------------------------------------------------
+    -- FORCE A TURN ON EVERY SEGMENT
+    --------------------------------------------------
+
+    local minimumTurn =
+        math.rad(4.0)
+
+
+    local maximumTurn =
+        math.rad(18.0)
+
+
+    local turnAmount =
+        minimumTurn +
+        math.random() *
+        (
+            maximumTurn -
+            minimumTurn
+        )
+
+
+    --------------------------------------------------
+    -- RANDOM LEFT / RIGHT
+    --------------------------------------------------
+
+    turnAmount =
+        turnAmount *
+        RandomSide()
+
+
+    --------------------------------------------------
+    -- APPLY TURN
+    --------------------------------------------------
+
+    dirX, dirY =
+        RotateVector(
+            dirX,
+            dirY,
+            turnAmount
+        )
+
+
+    --------------------------------------------------
+    -- NORMALIZE
+    --------------------------------------------------
+
+    local valid
+
+
+    dirX, dirY, valid =
+        NormalizeVector(
+            dirX,
+            dirY
+        )
+
+
+    if not valid then
+
+        return
+            0.0,
+            1.0
+
+    end
+
+
+    return
+        dirX,
+        dirY
+
+end
+
+
+--------------------------------------------------
+-- GENERATE BRANCH
+--------------------------------------------------
+
+function GenerateBranch(
+    lines,
+    startX,
+    startY,
+    dirX,
+    dirY,
+    length,
+    depth,
+    startProgress,
+    settings
+)
+
+    --------------------------------------------------
+    -- DEPTH LIMIT
+    --------------------------------------------------
+
+    if depth > settings.maxBranchDepth then
+
+        return
+
+    end
+
+
+    --------------------------------------------------
+    -- GLOBAL BRANCH BUDGET
+    --
+    -- This prevents high Segments / Branch Segments
+    -- settings from producing an enormous recursive
+    -- branch tree.
+    --------------------------------------------------
+
+    if settings.branchCount >= settings.maxBranches then
+
+        return
+
+    end
+
+
+    settings.branchCount =
+        settings.branchCount + 1
+
+
+    --------------------------------------------------
+    -- NORMALIZE INITIAL DIRECTION
+    --------------------------------------------------
+
+    local valid
+
+
+    dirX, dirY, valid =
+        NormalizeVector(
+            dirX,
+            dirY
+        )
+
+
+    if not valid then
+
+        return
+
+    end
+
+
+    --------------------------------------------------
+    -- TIMING
+    --------------------------------------------------
+
+    local availableProgress =
+        1.0 -
+        startProgress
+
+
+    local duration =
+        availableProgress *
+        0.45 *
+        math.pow(
+            0.7,
+            depth - 1
+        )
+
+
+    local endProgress =
+        math.min(
+            1.0,
+            startProgress +
+            duration
+        )
+
+
+    --------------------------------------------------
+    -- CREATE BRANCH POLYLINE
+    --------------------------------------------------
+
+    local line =
+        NewPolyline(
+            startX,
+            startY,
+            depth,
+            startProgress,
+            endProgress
+        )
+
+
+    table.insert(
+        lines,
+        line
+    )
+
+
+    --------------------------------------------------
+    -- STATE
+    --------------------------------------------------
+
+    local x =
+        startX
+
+
+    local y =
+        startY
+
+
+    local stepLength =
+        length /
+        settings.branchSegments
+
+
+    --------------------------------------------------
+    -- CHILD BRANCHES SHOULD NOT START TOO EARLY
+    --------------------------------------------------
+
+    local minimumForkSegment =
+        math.max(
+            2,
+            math.floor(
+                settings.branchSegments *
+                0.25
+            )
+        )
+
+
+    --------------------------------------------------
+    -- GENERATE BRANCH
+    --------------------------------------------------
+
+    for i = 1, settings.branchSegments do
+
+        --------------------------------------------------
+        -- CHANGE DIRECTION
+        --------------------------------------------------
+
+        dirX, dirY =
+            UpdateBranchDirection(
+                dirX,
+                dirY
+            )
+
+
+        --------------------------------------------------
+        -- ADVANCE
+        --------------------------------------------------
+
+        x =
+            x +
+            dirX * stepLength
+
+
+        y =
+            y +
+            dirY * stepLength
+
+
+        --------------------------------------------------
+        -- STORE POINT
+        --------------------------------------------------
+
+        AddPoint(
+            line,
+            x,
+            y
+        )
+
+
+        --------------------------------------------------
+        -- CHILD BRANCH TEST
+        --------------------------------------------------
+
+        if
+            depth < settings.maxBranchDepth and
+            settings.branchCount < settings.maxBranches and
+            i >= minimumForkSegment
+        then
+
+            --------------------------------------------------
+            -- REDUCE CHILD FREQUENCY BY DEPTH
+            --------------------------------------------------
+
+            local depthFactor =
+                math.pow(
+                    0.65,
+                    depth - 1
+                )
+
+
+            local chance =
+                settings.childBranchChance *
+                depthFactor
+
+
+            if math.random() < chance then
+
+                --------------------------------------------------
+                -- CHILD ANGLE
+                --------------------------------------------------
+
+                local angle =
+                    settings.branchAngle *
+                    (
+                        0.85 +
+                        math.random() *
+                        0.65
+                    ) *
+                    RandomSide()
+
+
+                --------------------------------------------------
+                -- CHILD DIRECTION
+                --------------------------------------------------
+
+                local childDirX,
+                      childDirY =
+                    RotateVector(
+                        dirX,
+                        dirY,
+                        angle
+                    )
+
+
+                --------------------------------------------------
+                -- CHILD LENGTH
+                --------------------------------------------------
+
+                local childLength =
+                    length *
+                    (
+                        0.40 +
+                        math.random() *
+                        0.25
+                    )
+
+
+                --------------------------------------------------
+                -- CHILD PROGRESS START
+                --------------------------------------------------
+
+                local branchT =
+                    i /
+                    settings.branchSegments
+
+
+                local currentProgress =
+                    startProgress +
+                    (
+                        endProgress -
+                        startProgress
+                    ) *
+                    branchT
+
+
+                --------------------------------------------------
+                -- RECURSION
+                --------------------------------------------------
+
+                GenerateBranch(
+                    lines,
+
+                    x,
+                    y,
+
+                    childDirX,
+                    childDirY,
+
+                    childLength,
+
+                    depth + 1,
+
+                    currentProgress,
+
+                    settings
+                )
+
+            end
+        end
+    end
+
+end
+
+
+--------------------------------------------------
+-- GENERATE MAIN BOLT
+--------------------------------------------------
+
+function GenerateMainBolt(
+    start,
+    target,
+    settings
+)
+
+    --------------------------------------------------
+    -- OUTPUT
+    --------------------------------------------------
+
+    local lines = {}
+
+
+    --------------------------------------------------
+    -- MAIN LINE
+    --------------------------------------------------
+
+    local mainLine =
+        NewPolyline(
+            start.X,
+            start.Y,
+            0,
+            0.0,
+            1.0
+        )
+
+
+    table.insert(
+        lines,
+        mainLine
+    )
+
+
+    --------------------------------------------------
+    -- START -> TARGET
+    --------------------------------------------------
+
+    local dx =
+        target.X -
+        start.X
+
+
+    local dy =
+        target.Y -
+        start.Y
+
+
+    local mainLength =
+        VectorLength(
+            dx,
+            dy
+        )
+
+
+    --------------------------------------------------
+    -- ZERO LENGTH
+    --------------------------------------------------
+
+    if mainLength < 0.000001 then
+
+        return lines
+
+    end
+
+
+    --------------------------------------------------
+    -- MAIN DIRECTION
+    --------------------------------------------------
+
+    local mainDirX =
+        dx /
+        mainLength
+
+
+    local mainDirY =
+        dy /
+        mainLength
+
+
+    --------------------------------------------------
+    -- PERPENDICULAR
+    --------------------------------------------------
+
+    local perpX =
+        -mainDirY
+
+
+    local perpY =
+        mainDirX
+
+
+    --------------------------------------------------
+    -- RANDOM WALK
+    --------------------------------------------------
+
+    local offset =
+        0.0
+
+
+    local velocity =
+        0.0
+
+
+    local previousX =
+        start.X
+
+
+    local previousY =
+        start.Y
+
+
+    --------------------------------------------------
+    -- MAIN INTERMEDIATE POINTS
+    --------------------------------------------------
+
+    for i = 1, settings.segments - 1 do
+
+        local t =
+            i /
+            settings.segments
+
+
+        --------------------------------------------------
+        -- BASE POSITION
+        --------------------------------------------------
+
+        local x =
+            start.X +
+            dx * t
+
+
+        local y =
+            start.Y +
+            dy * t
+
+
+        --------------------------------------------------
+        -- RANDOM SIDEWAYS FORCE
+        --------------------------------------------------
+
+        local randomForce =
+            RandomSigned() *
+            settings.randomness *
+            2.5
+
+
+        velocity =
+            velocity +
+            randomForce
+
+
+        --------------------------------------------------
+        -- LOW MOMENTUM = MORE DIRECTION CHANGES
+        --------------------------------------------------
+
+        velocity =
+            velocity *
+            0.25
+
+
+        --------------------------------------------------
+        -- LOW OFFSET MEMORY = FEWER SMOOTH ARCS
+        --------------------------------------------------
+
+        offset =
+            offset * 0.55 +
+            velocity
+
+
+        --------------------------------------------------
+        -- ZERO DISPLACEMENT AT ENDS
+        --------------------------------------------------
+
+        local envelope =
+            math.sin(
+                math.pi *
+                t
+            )
+
+
+        local displacement =
+            offset *
+            envelope
+
+
+        --------------------------------------------------
+        -- APPLY DISPLACEMENT
+        --------------------------------------------------
+
+        x =
+            x +
+            perpX *
+            displacement
+
+
+        y =
+            y +
+            perpY *
+            displacement
+
+
+        --------------------------------------------------
+        -- STORE MAIN POINT
+        --------------------------------------------------
+
+        AddPoint(
+            mainLine,
+            x,
+            y
+        )
+
+
+        --------------------------------------------------
+        -- LOCAL MAIN DIRECTION
+        --------------------------------------------------
+
+        local localDX =
+            x -
+            previousX
+
+
+        local localDY =
+            y -
+            previousY
+
+
+        local valid
+
+
+        localDX, localDY, valid =
+            NormalizeVector(
+                localDX,
+                localDY
+            )
+
+
+        --------------------------------------------------
+        -- FIRST LEVEL BRANCH
+        --------------------------------------------------
+
+        if
+            valid and
+            settings.maxBranchDepth > 0 and
+            settings.branchCount < settings.maxBranches and
+            math.random() < settings.branchChance
+        then
+
+            --------------------------------------------------
+            -- ANGLE
+            --------------------------------------------------
+
+            local angle =
+                settings.branchAngle *
+                (
+                    0.7 +
+                    math.random() *
+                    0.6
+                ) *
+                RandomSide()
+
+
+            --------------------------------------------------
+            -- DIRECTION
+            --------------------------------------------------
+
+            local branchDirX,
+                  branchDirY =
+                RotateVector(
+                    localDX,
+                    localDY,
+                    angle
+                )
+
+
+            --------------------------------------------------
+            -- LENGTH
+            --------------------------------------------------
+
+            local branchLength =
+                settings.branchLength *
+                (
+                    0.6 +
+                    math.random() *
+                    0.8
+                )
+
+
+            --------------------------------------------------
+            -- GENERATE
+            --------------------------------------------------
+
+            GenerateBranch(
+                lines,
+
+                x,
+                y,
+
+                branchDirX,
+                branchDirY,
+
+                branchLength,
+
+                1,
+
+                t,
+
+                settings
+            )
+
+        end
+
+
+        previousX =
+            x
+
+
+        previousY =
+            y
+
+    end
+
+
+    --------------------------------------------------
+    -- GUARANTEE EXACT TARGET
+    --------------------------------------------------
+
+    AddPoint(
+        mainLine,
+        target.X,
+        target.Y
+    )
+
+
+    return lines
+
+end
+
+
+--------------------------------------------------
+-- CALCULATE LINE REVEAL
+--------------------------------------------------
+
+function GetLineReveal(
+    line,
+    progress
+)
+
+    --------------------------------------------------
+    -- NOT STARTED
+    --------------------------------------------------
+
+    if progress <= line.startProgress then
+
+        return 0.0
+
+    end
+
+
+    --------------------------------------------------
+    -- COMPLETE
+    --------------------------------------------------
+
+    if progress >= line.endProgress then
+
+        return 1.0
+
+    end
+
+
+    --------------------------------------------------
+    -- LOCAL PROGRESS
+    --------------------------------------------------
+
+    local duration =
+        line.endProgress -
+        line.startProgress
+
+
+    if duration < 0.000001 then
+
+        return 1.0
+
+    end
+
+
+    return
+        (
+            progress -
+            line.startProgress
+        ) /
+        duration
+
+end
+
+
+--------------------------------------------------
+-- RENDER POLYLINE
+--------------------------------------------------
+
+function RenderPolyline(
+    result,
+    line,
+    width,
+    reveal,
+    req
+)
+
+    local pointCount =
+        #line.points
+
+
+    if pointCount < 2 then
+
+        return
+
+    end
+
+
+    if reveal <= 0.0 then
+
+        return
+
+    end
+
+
+    --------------------------------------------------
+    -- SHAPE
+    --------------------------------------------------
+
+    local shape =
+        Shape()
+
+
+    local first =
+        line.points[1]
+
+
+    shape:MoveTo(
+        first.x,
+        first.y
+    )
+
+
+    --------------------------------------------------
+    -- REVEAL POSITION
+    --------------------------------------------------
+
+    local segmentCount =
+        pointCount - 1
+
+
+    local revealPosition =
+        reveal *
+        segmentCount
+
+
+    local fullSegments =
+        math.floor(
+            revealPosition
+        )
+
+
+    local partial =
+        revealPosition -
+        fullSegments
+
+
+    --------------------------------------------------
+    -- SAFETY
+    --------------------------------------------------
+
+    if fullSegments > segmentCount then
+
+        fullSegments =
+            segmentCount
+
+    end
+
+
+    --------------------------------------------------
+    -- FULL SEGMENTS
+    --------------------------------------------------
+
+    for i = 1, fullSegments do
+
+        local point =
+            line.points[
+                i + 1
+            ]
+
+
+        shape:LineTo(
+            point.x,
+            point.y
+        )
+
+    end
+
+
+    --------------------------------------------------
+    -- PARTIAL SEGMENT
+    --------------------------------------------------
+
+    if
+        fullSegments < segmentCount and
+        partial > 0.000001
+    then
+
+        local a =
+            line.points[
+                fullSegments + 1
+            ]
+
+
+        local b =
+            line.points[
+                fullSegments + 2
+            ]
+
+
+        local x =
+            a.x +
+            (
+                b.x -
+                a.x
+            ) *
+            partial
+
+
+        local y =
+            a.y +
+            (
+                b.y -
+                a.y
+            ) *
+            partial
+
+
+        shape:LineTo(
+            x,
+            y
+        )
+
+    end
+
+
+    --------------------------------------------------
+    -- OUTLINE
+    --------------------------------------------------
+
+    local outline =
+        shape:OutlineOfShape(
+            width,
+            "OLT_Solid",
+            "OJT_Round",
+            req:IsQuick() and 8 or 16
+        )
+
+
+    --------------------------------------------------
+    -- CHANNEL
+    --------------------------------------------------
+
+    local channel =
+        ImageChannel(
+            result,
+            8
+        )
+
+
+    local fill =
+        FillStyle()
+
+
+    channel:SetStyleFill(
+        fill
+    )
+
+
+    channel:ShapeFill(
+        outline
+    )
+
+
+    --------------------------------------------------
+    -- WHITE LIGHTNING
+    --------------------------------------------------
+
+    local style =
+        ChannelStyle()
+
+
+    style.Color =
+        Pixel({
+            R = 1.0,
+            G = 1.0,
+            B = 1.0,
+            A = 1.0
+        })
+
+
+    --------------------------------------------------
+    -- COMPOSITE
+    --------------------------------------------------
+
+    if self.Status == "OK" then
+
+        channel:PutToImage(
+            "CM_Merge",
+            style
+        )
+
+    end
+
+end
+
+
+--------------------------------------------------
+-- RENDER LIGHTNING
+--------------------------------------------------
+
+function RenderLightning(
+    result,
+    lines,
+    boltWidth,
+    settings,
+    req
+)
+
+    for _, line in ipairs(lines) do
+
+        --------------------------------------------------
+        -- REVEAL
+        --------------------------------------------------
+
+        local reveal =
+            GetLineReveal(
+                line,
+                settings.progress
+            )
+
+
+        if reveal > 0.0 then
+
+            --------------------------------------------------
+            -- WIDTH BY GENERATION
+            --------------------------------------------------
+
+            local width =
+                boltWidth *
+                math.pow(
+                    settings.branchWidthFalloff,
+                    line.depth
+                )
+
+
+            --------------------------------------------------
+            -- RENDER
+            --------------------------------------------------
+
+            RenderPolyline(
+                result,
+                line,
+                width,
+                reveal,
+                req
+            )
+
+        end
+    end
+
+end
+
+
+--------------------------------------------------
+-- READ SETTINGS
+--------------------------------------------------
+
+function GetLightningSettings(req)
+
+    return {
+
+        seed =
+            math.floor(
+                InSeed:GetValue(req).Value
+            ),
+
+
+        segments =
+            math.max(
+                2,
+                math.floor(
+                    InSegments:GetValue(req).Value
+                )
+            ),
+
+
+        randomness =
+            InRandomness:GetValue(req).Value,
+
+
+        branchChance =
+            InBranchChance:GetValue(req).Value,
+
+
+        branchLength =
+            InBranchLength:GetValue(req).Value,
+
+
+        branchAngle =
+            math.rad(
+                InBranchAngle:GetValue(req).Value
+            ),
+
+
+        maxBranchDepth =
+            math.floor(
+                InBranchDepth:GetValue(req).Value
+            ),
+
+
+        branchSegments =
+            math.max(
+                2,
+                math.floor(
+                    InBranchSegments:GetValue(req).Value
+                )
+            ),
+
+
+        childBranchChance =
+            InChildBranchChance:GetValue(req).Value,
+
+
+        branchWidthFalloff =
+            InBranchWidthFalloff:GetValue(req).Value,
+
+
+        maxBranches =
+            math.max(
+                1,
+                math.floor(
+                    InMaxBranches:GetValue(req).Value
+                )
+            ),
+
+
+        progress =
+            InProgress:GetValue(req).Value,
+
+    }
+
+end
+
+
+--------------------------------------------------
+-- PROCESS
+--------------------------------------------------
+
+function Process(req)
+
+    --------------------------------------------------
+    -- INPUT
+    --------------------------------------------------
+
+    local bg =
+        InImage:GetValue(req)
+
+
+    if bg == nil then
+
+        OutImage:Set(
+            req,
+            nil
+        )
+
+        return
+
+    end
+
+
+    --------------------------------------------------
+    -- COPY BACKGROUND
+    --------------------------------------------------
+
+    local result =
+        bg:Copy()
+
+
+    --------------------------------------------------
+    -- INPUT VALUES
+    --------------------------------------------------
+
+    local start =
+        InStart:GetValue(req)
+
+
+    local target =
+        InTarget:GetValue(req)
+
+
+    local boltWidth =
+        InWidth:GetValue(req).Value
+
+
+    local settings =
+        GetLightningSettings(req)
+
+
+    --------------------------------------------------
+    -- RESET BRANCH BUDGET
+    --------------------------------------------------
+
+    settings.branchCount = 0
+
+
+    --------------------------------------------------
+    -- DETERMINISTIC RANDOMNESS
+    --------------------------------------------------
+
+    math.randomseed(
+        settings.seed
+    )
+
+
+    --------------------------------------------------
+    -- GENERATE GEOMETRY
+    --------------------------------------------------
+
+    local lines =
+        GenerateMainBolt(
+            start,
+            target,
+            settings
+        )
+
+
+    --------------------------------------------------
+    -- RENDER
+    --------------------------------------------------
+
+    RenderLightning(
+        result,
+        lines,
+        boltWidth,
+        settings,
+        req
+    )
+
+
+    --------------------------------------------------
+    -- OUTPUT
+    --------------------------------------------------
+
+    OutImage:Set(
+        req,
+        result
+    )
+
+end
